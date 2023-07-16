@@ -7,8 +7,8 @@ function getUsers(_req, res) {
 }
 
 function getUser(req, res) {
-  const { id } = req.params;
-  return User.findById(id)
+  const { userId } = req.params;
+  return User.findById(userId)
     .then((user) => {
       if (!user) {
         return res.status(404).send({ message: 'Пользователя с таким id нет' });

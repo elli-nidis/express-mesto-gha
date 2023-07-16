@@ -22,12 +22,7 @@ app.get('/', (_req, res) => {
 });
 
 app.use('/users', require('./routes/users'));
-
-// mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
-//   useNewUrlParser: true,
-//   useCreateIndex: true,
-//   useFindAndModify: false,
-// });
+app.use('/cards', require('./routes/cards'));
 
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 

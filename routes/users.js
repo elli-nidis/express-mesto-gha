@@ -1,7 +1,3 @@
-// GET /users — возвращает всех пользователей
-// GET /users/:userId - возвращает пользователя по _id
-// POST /users — создаёт пользователя
-
 // PATCH /users/me — обновляет профиль
 // PATCH /users/me/avatar — обновляет аватар
 const router = require('express').Router();
@@ -12,6 +8,6 @@ router.post('/', createUser); // было "/users" но я убрала, т.к. 
 
 router.get('/', getUsers);
 
-router.get('/:id', getUser);
+router.get('/:userId', getUser);
 
 module.exports = router;
