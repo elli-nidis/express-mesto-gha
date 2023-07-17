@@ -1,6 +1,3 @@
-// PUT /cards/:cardId/likes — поставить лайк карточке
-// DELETE /cards/:cardId/likes — убрать лайк с карточки
-
 const router = require('express').Router();
 
 const {

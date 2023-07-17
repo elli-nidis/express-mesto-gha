@@ -1,6 +1,6 @@
 [![Tests](../../actions/workflows/tests-13-sprint.yml/badge.svg)](../../actions/workflows/tests-13-sprint.yml) [![Tests](../../actions/workflows/tests-14-sprint.yml/badge.svg)](../../actions/workflows/tests-14-sprint.yml)
 # Проект Mesto фронтенд + бэкенд
-
+https://github.com/elli-nidis/express-mesto-gha.git
 
 ## Директории
 
@@ -14,3 +14,20 @@
 
 `npm run start` — запускает сервер   
 `npm run dev` — запускает сервер с hot-reload
+
+## Описание проекта
+ Бэкенд проекта Mesto. 
+ 
+## Основной функционал
+* загрузка данных пользователя на сервер
+* изменение данных пользователя на сервере
+* удаление пользователя с сервера
+* загрузка фотографий на сервер
+* удаление фотографий с сервера
+* проставление и удаление лайков фотографии
+
+## Используемые технологии Node.js, Express, Mongodb
+* Приложение создано на основе Express, версия 4.15.2.
+* Роуты.
+* Контроллеры.
+* Схемы и модели.
