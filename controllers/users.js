@@ -33,4 +33,32 @@ function createUser(req, res) {
     });
 }
 
-module.exports = { getUsers, getUser, createUser };
+function updateUser(req, res) {
+  const { name, about } = req.body;
+  const userId = req.user._id;
+  return User.findByIdAndUpdate(userId, { name, about }, { new: true, runValidators: true })
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({ message: 'Пользователя с таким id нет' });
+      }
+      return res.status(200).send(user);
+    })
+    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+}
+
+function updateAvatar(req, res) {
+  const { avatar } = req.body;
+  const userId = req.user._id;
+  return User.findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true })
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({ message: 'Пользователя с таким id нет' });
+      }
+      return res.status(200).send(user);
+    })
+    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+}
+
+module.exports = {
+  getUsers, getUser, createUser, updateUser, updateAvatar,
+};
