@@ -17,10 +17,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/', (_req, res) => {
-  res.json({ response: 'success' });
-});
-
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 

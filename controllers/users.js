@@ -1,9 +1,10 @@
 const User = require('../models/user');
+const { badRequest, notFound, serverError } = require('../utils/constants');
 
 function getUsers(_req, res) {
   return User.find({})
-    .then((users) => res.status(200).send(users))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .then((users) => res.send(users))
+    .catch(() => res.status(serverError).send({ message: 'Произошла ошибка' }));
 }
 
 function getUser(req, res) {
@@ -11,21 +12,18 @@ function getUser(req, res) {
   return User.findById(userId)
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: 'Запрашиваемый пользователь не найден' });
+        return res.status(notFound).send({ message: 'Запрашиваемый пользователь не найден' });
       }
-      return res.status(200).send(user);
+      return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({
+        res.status(badRequest).send({
           message: 'Некорректный id пользователя',
         });
         return;
       }
-      // console.log(err.name);
-      // console.log(err.error);
-      // console.log(err.message);
-      res.status(500).send({ message: 'Произошла ошибка' });
+      res.status(serverError).send({ message: 'Произошла ошибка' });
     });
 }
 
@@ -35,12 +33,12 @@ function createUser(req, res) {
     .then((user) => res.status(201).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({
+        res.status(badRequest).send({
           message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`,
         });
         return;
       }
-      res.status(500).send({ message: 'Произошла ошибка' });
+      res.status(serverError).send({ message: 'Произошла ошибка' });
     });
 }
 
@@ -50,18 +48,18 @@ function updateUser(req, res) {
   return User.findByIdAndUpdate(userId, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: 'Пользователя с таким id нет' });
+        return res.status(notFound).send({ message: 'Пользователя с таким id нет' });
       }
-      return res.status(200).send(user);
+      return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({
+        res.status(badRequest).send({
           message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`,
         });
         return;
       }
-      res.status(500).send({ message: 'Произошла ошибка' });
+      res.status(serverError).send({ message: 'Произошла ошибка' });
     });
 }
 
@@ -71,18 +69,18 @@ function updateAvatar(req, res) {
   return User.findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: 'Пользователя с таким id нет' });
+        return res.status(notFound).send({ message: 'Пользователя с таким id нет' });
       }
-      return res.status(200).send(user);
+      return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({
+        res.status(badRequest).send({
           message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`,
         });
         return;
       }
-      res.status(500).send({ message: 'Произошла ошибка' });
+      res.status(serverError).send({ message: 'Произошла ошибка' });
     });
 }
 
