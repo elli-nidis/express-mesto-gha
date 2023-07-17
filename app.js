@@ -24,6 +24,8 @@ app.get('/', (_req, res) => {
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
+app.use('*', (_req, res) => res.status(404).json({ message: 'Такой страницы не существует' }));
+
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 
 app.listen(PORT, () => {

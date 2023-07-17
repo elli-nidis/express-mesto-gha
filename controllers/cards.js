@@ -31,7 +31,15 @@ function deleteCard(req, res) {
       }
       return res.status(200).send(card);
     })
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({
+          message: 'Некорректный id карточки',
+        });
+        return;
+      }
+      res.status(500).send({ message: 'Произошла ошибка' });
+    });
 }
 
 function likeCard(req, res) {
@@ -50,6 +58,12 @@ function likeCard(req, res) {
       if (err.name === 'ValidationError') {
         res.status(400).send({
           message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`,
+        });
+        return;
+      }
+      if (err.name === 'CastError') {
+        res.status(400).send({
+          message: 'Некорректный id карточки',
         });
         return;
       }
@@ -73,6 +87,12 @@ function dislikeCard(req, res) {
       if (err.name === 'ValidationError') {
         res.status(400).send({
           message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`,
+        });
+        return;
+      }
+      if (err.name === 'CastError') {
+        res.status(400).send({
+          message: 'Некорректный id карточки',
         });
         return;
       }

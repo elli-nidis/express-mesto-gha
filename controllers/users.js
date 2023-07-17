@@ -15,13 +15,16 @@ function getUser(req, res) {
       }
       return res.status(200).send(user);
     })
-    .catch((err) => { // дописала после тестов
-      if (err.name === 'ValidationError') {
+    .catch((err) => {
+      if (err.name === 'CastError') {
         res.status(400).send({
-          message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`,
+          message: 'Некорректный id пользователя',
         });
         return;
       }
+      // console.log(err.name);
+      // console.log(err.error);
+      // console.log(err.message);
       res.status(500).send({ message: 'Произошла ошибка' });
     });
 }
