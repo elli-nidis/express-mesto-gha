@@ -34,25 +34,29 @@ function deleteCard(req, res) {
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 }
 
-function setLike(req, res) {
-  const { name, link } = req.body;
-  const owner = req.user._id;
-  return Card.create({ name, link, owner })
-    .then((card) => res.status(201).send(card))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(400).send({
-          message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`,
-        });
-        return;
+function likeCard(req, res) {
+  return Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true },
+  )
+    .then((card) => {
+      if (!card) {
+        return res.status(404).send({ message: 'Карточка с указанным id не найдена' });
       }
+      return res.status(200).send(card);
+    })
+    .catch(() => {
       res.status(500).send({ message: 'Произошла ошибка' });
     });
 }
 
-function deleteLike(req, res) {
-  const { cardId } = req.params;
-  return Card.findById(cardId)
+function dislikeCard(req, res) {
+  return Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $pull: { likes: req.user._id } },
+    { naw: true },
+  )
     .then((card) => {
       if (!card) {
         return res.status(404).send({ message: 'Карточка с указанным id не найдена' });
@@ -63,5 +67,5 @@ function deleteLike(req, res) {
 }
 
 module.exports = {
-  getCards, createCard, deleteCard, setLike, deleteLike,
+  getCards, createCard, deleteCard, likeCard, dislikeCard,
 };
