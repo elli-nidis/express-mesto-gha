@@ -14,7 +14,7 @@ function createCard(req, res) {
     .then((card) => res.status(201).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(notFound).send({
+        res.status(badRequest).send({
           message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`,
         });
         return;
