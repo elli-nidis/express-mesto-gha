@@ -15,7 +15,15 @@ function getUser(req, res) {
       }
       return res.status(200).send(user);
     })
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => { // дописала после тестов
+      if (err.name === 'ValidationError') {
+        res.status(400).send({
+          message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`,
+        });
+        return;
+      }
+      res.status(500).send({ message: 'Произошла ошибка' });
+    });
 }
 
 function createUser(req, res) {
