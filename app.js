@@ -22,7 +22,12 @@ app.use('/cards', require('./routes/cards'));
 
 app.use('*', (_req, res) => res.status(404).json({ message: 'Такой страницы не существует' }));
 
-mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
+mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
+  autoIndex: true,
+})
+  .then(() => {
+    console.log('Успешное соединение с mongoDB');
+  });
 
 app.listen(PORT, () => {
   console.log(`Приложение работает на ${PORT} порте`);
