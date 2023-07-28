@@ -6,6 +6,8 @@ const mongoose = require('mongoose');
 
 const bodyParser = require('body-parser');
 
+const { login, createUser } = require('./controllers/users');
+
 const app = express();
 
 app.use(bodyParser.json());
@@ -19,6 +21,9 @@ app.use((req, res, next) => {
 
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
+
+app.post('/signin', login);
+app.post('/signup', createUser);
 
 app.use('*', (_req, res) => res.status(404).json({ message: 'Такой страницы не существует' }));
 
