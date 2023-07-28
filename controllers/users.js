@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const { badRequest, unauthorized, notFound, serverError } = require('../utils/constants');
 
@@ -96,21 +97,13 @@ function updateAvatar(req, res) {
 function login(req, res) {
   const { email, password } = req.body;
 
-  User.findOne({ email })
+  return User.findUserByCredentials(email, password)
     .then((user) => {
-      if (!user) {
-        return Promise.reject(new Error('Неправильные почта или пароль'));
-      }
-      return bcrypt.compare(password, user.password);
-    })
-    .then((matched) => {
-      if (!matched) {
-        return Promise.reject(new Error('Неправильные почта или пароль'));
-      }
-      return res.send({ message: 'Добро пожаловать!' }); // Здесь нужно отправить токен
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      res.send({ token });
     })
     .catch((err) => {
-      res.status(unauthorized).send({message: err.message});
+      res.status(unauthorized).send({ message: err.message });
     });
 }
 
