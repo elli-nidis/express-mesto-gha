@@ -1,5 +1,5 @@
 const Card = require('../models/card');
-const { badRequest, notFound, serverError } = require('../utils/constants');
+const { badRequest, forbidden, notFound, serverError } = require('../utils/constants');
 
 function getCards(_req, res) {
   return Card.find({})
@@ -25,12 +25,27 @@ function createCard(req, res) {
 
 function deleteCard(req, res) {
   const { cardId } = req.params;
-  return Card.findByIdAndRemove(cardId)
+  const currentUser = req.user._id;
+  // console.log('req.params');
+  // console.log(req.params);
+  // console.log('req.user._id');
+  // console.log(req.user._id);
+
+  // return Card.findByIdAndRemove(cardId)
+  return Card.findById(cardId)
     .then((card) => {
       if (!card) {
         return res.status(notFound).send({ message: 'Запрашиваемая карточка не найдена' });
       }
-      return res.send(card);
+      const cardOwner = card.owner.toString();
+      if (cardOwner !== currentUser) {
+        console.log(cardOwner);
+        console.log(currentUser);
+        console.log(`${cardOwner === currentUser}`);
+        return res.status(forbidden).send({ message: 'Вы не можете удалить чужую карточку' });
+      }
+      return Card.findByIdAndRemove(cardId)
+        .then((cardData) => res.send(cardData));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
