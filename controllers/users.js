@@ -1,7 +1,10 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const { badRequest, unauthorized, notFound, serverError } = require('../utils/constants');
+const {
+  badRequest, unauthorized, notFound, serverError,
+} = require('../utils/constants');
+// const { auth } = require('../middlewares/auth');
 
 function getUsers(_req, res) {
   return User.find({})
@@ -99,14 +102,35 @@ function login(req, res) {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-      res.send({ token });
+      const token = jwt.sign({ _id: user._id }, 'secret-word-mutabor', { expiresIn: '7d' });
+      // res.send({ token });
+      res.cookie('jwt', token, {
+        maxAge: 3600000,
+        httpOnly: true,
+        sameSite: true,
+      })
+        .send({ _id: user._id, email: user.email });
     })
     .catch((err) => {
-      res.status(unauthorized).send({ message: err.message });
+      res.status(unauthorized).send({ message: err.message }); // Исправить- объект ошибки
     });
 }
 
+function getMe(req, res) {
+  console.log('getMe');
+  const { _id } = req.user;
+  console.log(req.user);
+
+  User.findOne({ _id })
+    .then((user) => {
+      res.send({
+        _id: user._id, name: user.name, about: user.about, email: user.email,
+      });
+    });
+
+  // res.send(_id);
+}
+
 module.exports = {
-  getUsers, getUser, createUser, updateUser, updateAvatar, login,
+  getUsers, getUser, createUser, updateUser, updateAvatar, login, getMe,
 };

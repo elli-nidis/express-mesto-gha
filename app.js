@@ -6,24 +6,28 @@ const mongoose = require('mongoose');
 
 const bodyParser = require('body-parser');
 
+const { auth } = require('./middlewares/auth');
+
 const { login, createUser } = require('./controllers/users');
+
+
 
 const app = express();
 
 app.use(bodyParser.json());
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '64b3dce9019b9e414ccfb356',
-  };
-  next();
-});
-
-app.use('/users', require('./routes/users'));
-app.use('/cards', require('./routes/cards'));
+// app.use((req, res, next) => {
+//   req.user = {
+//     _id: '64b3dce9019b9e414ccfb356',
+//   };
+//   next();
+// });
 
 app.post('/signin', login);
 app.post('/signup', createUser);
+
+app.use('/users', auth, require('./routes/users'));
+app.use('/cards', auth, require('./routes/cards'));
 
 app.use('*', (_req, res) => res.status(404).json({ message: 'Такой страницы не существует' }));
 
