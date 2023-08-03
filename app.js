@@ -36,7 +36,7 @@ app.use('*', (_req, res) => res.status(404).json({ message: 'Такой стра
 app.use(errors());
 
 app.use((err, _req, res, next) => {
-  if (err.code === 11000) res.status(conflict).send({ message: 'Пользователь с указанным email уже зарегистрирован' });
+  if (err.statusCode === conflict) res.status(conflict).send({ message: 'Пользователь с указанным email уже зарегистрирован' });
   if (err.name === 'CastError' || err.name === 'ValidationError') res.status(badRequest).send({ message: 'Переданы некорректные данные' });
   if (err.statusCode === unauthorized) res.status(unauthorized).send({ message: 'Ошибка авторизации: неверный логин или пароль' });
   if (err.statusCode === forbidden) res.status(forbidden).send({ message: 'Вы не можете удалить чужую карточку' });

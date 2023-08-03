@@ -48,6 +48,7 @@ function getUser(req, res, next) {
 }
 
 function createUser(req, res, next) {
+  console.log('createUser');
   const {
     name, about, avatar, email, password,
   } = req.body;
@@ -68,8 +69,10 @@ function createUser(req, res, next) {
         return;
       }
       if (err.code === 11000) {
-        next(conflictError);
-        return;
+        console.log('11000');
+        // eslint-disable-next-line consistent-return
+        return next(conflictError);
+        // return;
       }
       // res.status(serverError).send({ message: 'Произошла ошибка' });
       next(internalServerError);
