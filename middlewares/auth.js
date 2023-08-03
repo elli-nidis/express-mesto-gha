@@ -6,12 +6,23 @@ const unauthorizedError = new UnauthorizedError({ message: 'Необходима
 
 // eslint-disable-next-line consistent-return
 function auth(req, _res, next) {
-  const token = req.headers.cookie.replace('jwt=', '');
+  console.log('auth');
+
+  // const token = req.headers.cookie.replace('jwt=', '') || undefined;
+  let token;
+  try {
+    token = req.headers.cookie.replace('jwt=', '');
+  } catch (err) {
+    return next(unauthorizedError);
+  }
+
+  console.log('token');
+  console.log(token);
 
   if (!token) {
     // return res.status(unauthorized).send({ message: 'Необходима авторизация' });
-    next(unauthorizedError);
-    return;
+    return next(unauthorizedError);
+    // return;
   }
 
   let payload;
@@ -20,7 +31,7 @@ function auth(req, _res, next) {
     payload = jwt.verify(token, 'secret-word-mutabor');
   } catch (err) {
     // return res.status(unauthorized).send({ message: 'Необходима авторизация' });
-    next(unauthorizedError);
+    return next(unauthorizedError);
     // return;
   }
 

@@ -15,6 +15,7 @@ const badRequestError = new BadRequestError({ message: 'Переданы нек�
 const conflictError = new ConflictError({ message: 'Пользователь с указанным email уже зарегистрирован' });
 
 function getUsers(_req, res, next) {
+  console.log('getUsers');
   return User.find({})
     .then((users) => res.send(users))
     .catch(() => next(internalServerError));
@@ -56,7 +57,8 @@ function createUser(req, res, next) {
       name, about, avatar, email, password: hash,
     }))
     .then((user) => res.status(201).send({
-      _id: user._id, name: user.name, about: user.about, email: user.email,
+      // _id: user._id, name: user.name, about: user.about, email: user.email,
+      user,
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {

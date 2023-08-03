@@ -41,8 +41,9 @@ app.use((err, _req, res, next) => {
   if (err.statusCode === unauthorized) res.status(unauthorized).send({ message: 'Ошибка авторизации: неверный логин или пароль' });
   if (err.statusCode === forbidden) res.status(forbidden).send({ message: 'Вы не можете удалить чужую карточку' });
   if (err.statusCode === notFound) res.status(notFound).send({ message: 'Такой страницы не существует' });
+  if (err.statusCode === serverError) res.status(notFound).send({ message: 'Произошла ошибка' });
 
-  res.status(serverError).send({ message: 'Произошла ошибка' });
+  // res.status(serverError).send({ message: 'Произошла ошибка' });
 
   next();
 });
