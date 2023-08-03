@@ -15,44 +15,32 @@ const badRequestError = new BadRequestError({ message: 'Переданы нек�
 const conflictError = new ConflictError({ message: 'Пользователь с указанным email уже зарегистрирован' });
 
 function getUsers(_req, res, next) {
-  console.log('getUsers');
   return User.find({})
     .then((users) => res.send(users))
     .catch(() => next(internalServerError));
-  // .catch(() => res.status(serverError).send({ message: 'Произошла ошибка' }));
 }
 
 function getUser(req, res, next) {
-  console.log('getUser');
   const { userId } = req.params;
-  console.log('userId');
-  console.log(userId);
   return User.findById(userId)
     .then((user) => {
       if (!user) {
-        // return res.status(notFound).send({ message: 'Запрашиваемый пользователь не найден' });
         return next(notFoundError);
       }
       // eslint-disable-next-line consistent-return
       return res.status(200).send({
         _id: user._id, name: user.name, about: user.about, avatar: user.avatar, email: user.email,
       });
-      // return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        // res.status(badRequest).send({
-        //   message: 'Некорректный id пользователя',
-        // });
         return next(badRequestError);
       }
-      // res.status(serverError).send({ message: 'Произошла ошибка' });
       return next(internalServerError);
     });
 }
 
 function createUser(req, res, next) {
-  console.log('createUser');
   const {
     name, about, avatar, email, password,
   } = req.body;
@@ -66,18 +54,12 @@ function createUser(req, res, next) {
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        // res.status(badRequest).send({
-        //   message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`,
-        // });
         return next(badRequestError);
       }
       if (err.code === 11000) {
-        console.log('11000');
         // eslint-disable-next-line consistent-return
         return next(conflictError);
-        // return;
       }
-      // res.status(serverError).send({ message: 'Произошла ошибка' });
       return next(internalServerError);
     });
 }
@@ -88,7 +70,6 @@ function updateUser(req, res, next) {
   return User.findByIdAndUpdate(userId, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        // return res.status(notFound).send({ message: 'Пользователя с таким id нет' });
         return next(notFoundError);
       }
       // eslint-disable-next-line consistent-return
@@ -96,12 +77,8 @@ function updateUser(req, res, next) {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        // res.status(badRequest).send({
-        //   message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`,
-        // });
         return next(badRequestError);
       }
-      // res.status(serverError).send({ message: 'Произошла ошибка' });
       return next(internalServerError);
     });
 }
@@ -112,7 +89,6 @@ function updateAvatar(req, res, next) {
   return User.findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        // return res.status(notFound).send({ message: 'Пользователя с таким id нет' });
         return next(notFoundError);
       }
       // eslint-disable-next-line consistent-return
@@ -120,12 +96,8 @@ function updateAvatar(req, res, next) {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        // res.status(badRequest).send({
-        //   message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`,
-        // });
         return next(badRequestError);
       }
-      // res.status(serverError).send({ message: 'Произошла ошибка' });
       return next(internalServerError);
     });
 }
@@ -145,7 +117,6 @@ function login(req, res, next) {
     })
     .catch(() => {
       next(unauthorizedError);
-      // res.status(unauthorized).send({ message: err.message });
     });
 }
 

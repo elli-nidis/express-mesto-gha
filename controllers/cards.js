@@ -1,8 +1,4 @@
-// const { request } = require('express');
 const Card = require('../models/card');
-
-// const { badRequest, forbidden, notFound, serverError } = require('../utils/constants');
-
 const ForbiddenError = require('../errors/forbiddenError');
 const NotFoundError = require('../errors/notFoundError');
 const InternalServerError = require('../errors/InternalServerError');
@@ -16,7 +12,6 @@ const badRequestError = new BadRequestError({ message: 'Переданы нек�
 function getCards(_req, res, next) {
   return Card.find({})
     .then((cards) => res.send(cards))
-    // .catch(() => res.status(serverError).send({ message: 'Произошла ошибка' }));
     .catch(() => next(internalServerError));
 }
 
@@ -27,13 +22,9 @@ function createCard(req, res, next) {
     .then((card) => res.status(201).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        // res.status(badRequest).send({
-        //   message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`,
-        // });
         next(badRequestError);
         return;
       }
-      // res.status(serverError).send({ message: 'Произошла ошибка' });
       next(internalServerError);
     });
 }
@@ -45,13 +36,11 @@ function deleteCard(req, res, next) {
   return Card.findById(cardId)
     .then((card) => {
       if (!card) {
-        // return res.status(notFound).send({ message: 'Запрашиваемая карточка не найдена' });
         next(notFoundError);
         return;
       }
       const cardOwner = card.owner.toString();
       if (cardOwner !== currentUser) {
-        // return res.status(forbidden).send({ message: 'Вы не можете удалить чужую карточку' });
         next(forbiddenError);
         return;
       }
@@ -61,13 +50,9 @@ function deleteCard(req, res, next) {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        // res.status(badRequest).send({
-        //   message: 'Некорректный id карточки',
-        // });
         next(badRequestError);
         return;
       }
-      // res.status(serverError).send({ message: 'Произошла ошибка' });
       next(internalServerError);
     });
 }
@@ -80,7 +65,6 @@ function likeCard(req, res, next) {
   )
     .then((card) => {
       if (!card) {
-        // return res.status(notFound).send({ message: 'Запрашиваемая карточка не найдена' });
         next(notFoundError);
         return;
       }
@@ -89,13 +73,9 @@ function likeCard(req, res, next) {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        // res.status(badRequest).send({
-        //   message: 'Некорректный id карточки',
-        // });
         next(badRequestError);
         return;
       }
-      // res.status(serverError).send({ message: 'Произошла ошибка' });
       next(internalServerError);
     });
 }
@@ -108,7 +88,6 @@ function dislikeCard(req, res, next) {
   )
     .then((card) => {
       if (!card) {
-        // return res.status(notFound).send({ message: 'Запрашиваемая карточка не найдена' });
         next(notFoundError);
         return;
       }
@@ -117,13 +96,9 @@ function dislikeCard(req, res, next) {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        // res.status(badRequest).send({
-        //   message: 'Некорректный id карточки',
-        // });
         next(badRequestError);
         return;
       }
-      // res.status(serverError).send({ message: 'Произошла ошибка' });
       next(internalServerError);
     });
 }

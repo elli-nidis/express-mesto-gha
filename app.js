@@ -6,9 +6,7 @@ const bodyParser = require('body-parser');
 const { celebrate, Joi, errors } = require('celebrate');
 
 const { auth } = require('./middlewares/auth');
-
 const { login, createUser } = require('./controllers/users');
-
 const {
   badRequest, unauthorized, forbidden, notFound, conflict, serverError,
 } = require('./utils/constants');
@@ -49,17 +47,12 @@ app.use((err, _req, res, next) => {
   if (err.statusCode === notFound) res.status(notFound).send({ message: 'Такой страницы не существует' });
   if (err.statusCode === serverError) res.status(notFound).send({ message: 'Произошла ошибка' });
 
-  // res.status(serverError).send({ message: 'Произошла ошибка' });
-
   next();
 });
 
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
   autoIndex: true,
-})
-  .then(() => {
-    console.log('Успешное соединение с mongoDB');
-  });
+});
 
 app.listen(PORT, () => {
   console.log(`Приложение работает на ${PORT} порте`);
