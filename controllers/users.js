@@ -1,38 +1,52 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const {
-  badRequest, unauthorized, notFound, serverError,
-} = require('../utils/constants');
-// const { auth } = require('../middlewares/auth');
 
-function getUsers(_req, res) {
+const UnauthorizedError = require('../errors/unauthorizedError');
+const NotFoundError = require('../errors/notFoundError');
+const InternalServerError = require('../errors/InternalServerError');
+const BadRequestError = require('../errors/badRequestError');
+const ConflictError = require('../errors/conflictError');
+
+const unauthorizedError = new UnauthorizedError({ message: 'Необходима авторизация' });
+const notFoundError = new NotFoundError({ message: 'Запрашиваемые данные не найдены' });
+const internalServerError = new InternalServerError({ message: 'Произошла ошибка' });
+const badRequestError = new BadRequestError({ message: 'Переданы некорректные данные' });
+const conflictError = new ConflictError({ message: 'Пользователь с указанным email уже зарегистрирован' });
+
+function getUsers(_req, res, next) {
   return User.find({})
     .then((users) => res.send(users))
-    .catch(() => res.status(serverError).send({ message: 'Произошла ошибка' }));
+    .catch(() => next(internalServerError));
+  // .catch(() => res.status(serverError).send({ message: 'Произошла ошибка' }));
 }
 
-function getUser(req, res) {
+function getUser(req, res, next) {
   const { userId } = req.params;
   return User.findById(userId)
     .then((user) => {
       if (!user) {
-        return res.status(notFound).send({ message: 'Запрашиваемый пользователь не найден' });
+        // return res.status(notFound).send({ message: 'Запрашиваемый пользователь не найден' });
+        next(notFoundError);
+        return;
       }
+      // eslint-disable-next-line consistent-return
       return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(badRequest).send({
-          message: 'Некорректный id пользователя',
-        });
+        // res.status(badRequest).send({
+        //   message: 'Некорректный id пользователя',
+        // });
+        next(badRequestError);
         return;
       }
-      res.status(serverError).send({ message: 'Произошла ошибка' });
+      // res.status(serverError).send({ message: 'Произошла ошибка' });
+      next(internalServerError);
     });
 }
 
-function createUser(req, res) {
+function createUser(req, res, next) {
   const {
     name, about, avatar, email, password,
   } = req.body;
@@ -46,64 +60,79 @@ function createUser(req, res) {
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(badRequest).send({
-          message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`,
-        });
+        // res.status(badRequest).send({
+        //   message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`,
+        // });
+        next(badRequestError);
         return;
       }
-      res.status(serverError).send({ message: 'Произошла ошибка' });
+      if (err.code === 11000) {
+        next(conflictError);
+        return;
+      }
+      // res.status(serverError).send({ message: 'Произошла ошибка' });
+      next(internalServerError);
     });
 }
 
-function updateUser(req, res) {
+function updateUser(req, res, next) {
   const { name, about } = req.body;
   const userId = req.user._id;
   return User.findByIdAndUpdate(userId, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        return res.status(notFound).send({ message: 'Пользователя с таким id нет' });
+        // return res.status(notFound).send({ message: 'Пользователя с таким id нет' });
+        next(notFoundError);
+        return;
       }
+      // eslint-disable-next-line consistent-return
       return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(badRequest).send({
-          message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`,
-        });
+        // res.status(badRequest).send({
+        //   message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`,
+        // });
+        next(badRequestError);
         return;
       }
-      res.status(serverError).send({ message: 'Произошла ошибка' });
+      // res.status(serverError).send({ message: 'Произошла ошибка' });
+      next(internalServerError);
     });
 }
 
-function updateAvatar(req, res) {
+function updateAvatar(req, res, next) {
   const { avatar } = req.body;
   const userId = req.user._id;
   return User.findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        return res.status(notFound).send({ message: 'Пользователя с таким id нет' });
+        // return res.status(notFound).send({ message: 'Пользователя с таким id нет' });
+        next(notFoundError);
+        return;
       }
+      // eslint-disable-next-line consistent-return
       return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(badRequest).send({
-          message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`,
-        });
+        // res.status(badRequest).send({
+        //   message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`,
+        // });
+        next(badRequestError);
         return;
       }
-      res.status(serverError).send({ message: 'Произошла ошибка' });
+      // res.status(serverError).send({ message: 'Произошла ошибка' });
+      next(internalServerError);
     });
 }
 
-function login(req, res) {
+function login(req, res, next) {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'secret-word-mutabor', { expiresIn: '7d' });
-      // res.send({ token });
       res.cookie('jwt', token, {
         maxAge: 3600000,
         httpOnly: true,
@@ -111,24 +140,22 @@ function login(req, res) {
       })
         .send({ _id: user._id, email: user.email });
     })
-    .catch((err) => {
-      res.status(unauthorized).send({ message: err.message }); // Исправить- объект ошибки
+    .catch(() => {
+      next(unauthorizedError);
+      // res.status(unauthorized).send({ message: err.message });
     });
 }
 
-function getMe(req, res) {
-  console.log('getMe');
+function getMe(req, res, next) {
   const { _id } = req.user;
-  console.log(req.user);
 
   User.findOne({ _id })
     .then((user) => {
       res.send({
         _id: user._id, name: user.name, about: user.about, email: user.email,
       });
-    });
-
-  // res.send(_id);
+    })
+    .catch(() => next(internalServerError));
 }
 
 module.exports = {

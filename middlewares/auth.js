@@ -1,33 +1,30 @@
 const jwt = require('jsonwebtoken');
-const { unauthorized } = require('../utils/constants');
+// const { unauthorized } = require('../utils/constants');
+const UnauthorizedError = require('../errors/unauthorizedError');
 
-function auth(req, res, next) {
-  console.log('мидлвэра cookies');
-  console.log(req.headers.cookie);
+const unauthorizedError = new UnauthorizedError({ message: 'Необходима авторизация' });
 
+// eslint-disable-next-line consistent-return
+function auth(req, _res, next) {
   const token = req.headers.cookie.replace('jwt=', '');
 
-  // const { authorization } = req.headers;
-
-  // if (!authorization || !authorization.startWith('Bearer ')) {
   if (!token) {
-    return res.status(unauthorized).send({ message: 'Необходима авторизация' });
+    // return res.status(unauthorized).send({ message: 'Необходима авторизация' });
+    next(unauthorizedError);
+    return;
   }
-
-  // const token = authorization.replace('Bearer ', '');
 
   let payload;
 
   try {
     payload = jwt.verify(token, 'secret-word-mutabor');
   } catch (err) {
-    return res.status(unauthorized).send({ message: 'Необходима авторизация' });
+    // return res.status(unauthorized).send({ message: 'Необходима авторизация' });
+    next(unauthorizedError);
+    // return;
   }
 
   req.user = payload;
-
-  console.log('мидлвэра');
-  console.log(payload);
 
   next();
 }
