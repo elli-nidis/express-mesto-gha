@@ -1,9 +1,9 @@
-const { request } = require('express');
+// const { request } = require('express');
 const Card = require('../models/card');
 
 // const { badRequest, forbidden, notFound, serverError } = require('../utils/constants');
 
-const ForbiddenError = request('../errors/forbiddenError');
+const ForbiddenError = require('../errors/forbiddenError');
 const NotFoundError = require('../errors/notFoundError');
 const InternalServerError = require('../errors/InternalServerError');
 const BadRequestError = require('../errors/badRequestError');

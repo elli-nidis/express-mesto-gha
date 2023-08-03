@@ -22,7 +22,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
-      validator: validator.isUrl,
+      validator(v) {
+        return /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z]{1,4}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/.test(v);
+      },
       message: 'Указан некорректный url',
     },
   },
