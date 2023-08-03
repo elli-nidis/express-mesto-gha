@@ -57,8 +57,7 @@ function createUser(req, res, next) {
       name, about, avatar, email, password: hash,
     }))
     .then((user) => res.status(201).send({
-      // _id: user._id, name: user.name, about: user.about, email: user.email,
-      user,
+      _id: user._id, name: user.name, about: user.about, avatar: user.avatar, email: user.email,
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -154,7 +153,7 @@ function getMe(req, res, next) {
   User.findOne({ _id })
     .then((user) => {
       res.send({
-        _id: user._id, name: user.name, about: user.about, email: user.email,
+        _id: user._id, name: user.name, about: user.about, avatar: user.avatar, email: user.email,
       });
     })
     .catch(() => next(internalServerError));
