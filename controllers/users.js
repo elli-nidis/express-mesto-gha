@@ -23,7 +23,10 @@ function getUsers(_req, res, next) {
 }
 
 function getUser(req, res, next) {
+  console.log('getUser');
   const { userId } = req.params;
+  console.log('userId');
+  console.log(userId);
   return User.findById(userId)
     .then((user) => {
       if (!user) {
