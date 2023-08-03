@@ -28,22 +28,23 @@ function getUser(req, res, next) {
     .then((user) => {
       if (!user) {
         // return res.status(notFound).send({ message: 'Запрашиваемый пользователь не найден' });
-        next(notFoundError);
-        return;
+        return next(notFoundError);
       }
       // eslint-disable-next-line consistent-return
-      return res.send(user);
+      return res.send({
+        _id: user._id, name: user.name, about: user.about, avatar: user.avatar, email: user.email,
+      });
+      // return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         // res.status(badRequest).send({
         //   message: 'Некорректный id пользователя',
         // });
-        next(badRequestError);
-        return;
+        return next(badRequestError);
       }
       // res.status(serverError).send({ message: 'Произошла ошибка' });
-      next(internalServerError);
+      return next(internalServerError);
     });
 }
 
@@ -65,8 +66,7 @@ function createUser(req, res, next) {
         // res.status(badRequest).send({
         //   message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`,
         // });
-        next(badRequestError);
-        return;
+        return next(badRequestError);
       }
       if (err.code === 11000) {
         console.log('11000');
@@ -86,8 +86,7 @@ function updateUser(req, res, next) {
     .then((user) => {
       if (!user) {
         // return res.status(notFound).send({ message: 'Пользователя с таким id нет' });
-        next(notFoundError);
-        return;
+        return next(notFoundError);
       }
       // eslint-disable-next-line consistent-return
       return res.send(user);
@@ -97,8 +96,7 @@ function updateUser(req, res, next) {
         // res.status(badRequest).send({
         //   message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`,
         // });
-        next(badRequestError);
-        return;
+        return next(badRequestError);
       }
       // res.status(serverError).send({ message: 'Произошла ошибка' });
       next(internalServerError);
@@ -112,8 +110,7 @@ function updateAvatar(req, res, next) {
     .then((user) => {
       if (!user) {
         // return res.status(notFound).send({ message: 'Пользователя с таким id нет' });
-        next(notFoundError);
-        return;
+        return next(notFoundError);
       }
       // eslint-disable-next-line consistent-return
       return res.send(user);
@@ -123,8 +120,7 @@ function updateAvatar(req, res, next) {
         // res.status(badRequest).send({
         //   message: `${Object.values(err.errors).map((error) => error.message).join(', ')}`,
         // });
-        next(badRequestError);
-        return;
+        return next(badRequestError);
       }
       // res.status(serverError).send({ message: 'Произошла ошибка' });
       next(internalServerError);
