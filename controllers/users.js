@@ -31,7 +31,7 @@ function getUser(req, res, next) {
         return next(notFoundError);
       }
       // eslint-disable-next-line consistent-return
-      return res.send({
+      return res.status(200).send({
         _id: user._id, name: user.name, about: user.about, avatar: user.avatar, email: user.email,
       });
       // return res.send(user);
@@ -75,7 +75,7 @@ function createUser(req, res, next) {
         // return;
       }
       // res.status(serverError).send({ message: 'Произошла ошибка' });
-      next(internalServerError);
+      return next(internalServerError);
     });
 }
 
@@ -99,7 +99,7 @@ function updateUser(req, res, next) {
         return next(badRequestError);
       }
       // res.status(serverError).send({ message: 'Произошла ошибка' });
-      next(internalServerError);
+      return next(internalServerError);
     });
 }
 
@@ -123,7 +123,7 @@ function updateAvatar(req, res, next) {
         return next(badRequestError);
       }
       // res.status(serverError).send({ message: 'Произошла ошибка' });
-      next(internalServerError);
+      return next(internalServerError);
     });
 }
 
