@@ -45,7 +45,8 @@ function deleteCard(req, res, next) {
         return;
       }
       // eslint-disable-next-line consistent-return
-      return Card.findByIdAndRemove(cardId)
+      return Card.deleteOne({ _id: cardId })
+      // return Card.findByIdAndRemove(cardId)
         .then((cardData) => res.send(cardData));
     })
     .catch((err) => {
