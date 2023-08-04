@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
+
+const { regexpEmail } = require('../utils/constants');
 const BadRequestError = require('../errors/badRequestError');
 
 const badRequestError = new BadRequestError({ message: 'Неправильные почта или пароль' });
@@ -23,7 +25,7 @@ const userSchema = new mongoose.Schema({
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
       validator(v) {
-        return /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z]{1,4}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/.test(v);
+        return regexpEmail.test(v);
       },
       message: 'Указан некорректный url',
     },

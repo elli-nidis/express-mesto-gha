@@ -9,7 +9,7 @@ const cookieParser = require('cookie-parser');
 const { auth } = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
 const {
-  badRequest, unauthorized, forbidden, notFound, conflict, serverError,
+  badRequest, unauthorized, forbidden, notFound, conflict, serverError, regexpEmail,
 } = require('./utils/constants');
 
 const app = express();
@@ -29,7 +29,7 @@ app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().pattern(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z]{1,4}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/),
+    avatar: Joi.string().pattern(regexpEmail),
     email: Joi.string().required().email(),
     password: Joi.string().required(),
   }).unknown(true),
