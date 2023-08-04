@@ -7,10 +7,12 @@ const { celebrate, Joi, errors } = require('celebrate');
 const cookieParser = require('cookie-parser');
 
 const { auth } = require('./middlewares/auth');
+const errorHandler = require('./middlewares/errorHandler');
 const { login, createUser } = require('./controllers/users');
-const {
-  badRequest, unauthorized, forbidden, notFound, conflict, serverError, regexpEmail,
-} = require('./utils/constants');
+const { regexpEmail } = require('./utils/constants');
+const NotFoundError = require('./errors/notFoundError');
+
+const notFoundError = new NotFoundError('Такой страницы не существует');
 
 const app = express();
 
@@ -38,20 +40,11 @@ app.post('/signup', celebrate({
 app.use('/users', auth, require('./routes/users'));
 app.use('/cards', auth, require('./routes/cards'));
 
-app.use('*', (_req, res) => res.status(404).json({ message: 'Такой страницы не существует' }));
+app.use('*', (_req, _res, next) => next(notFoundError));
 
 app.use(errors());
 
-app.use((err, _req, res, next) => {
-  if (err.statusCode === conflict) res.status(conflict).send({ message: 'Пользователь с указанным email уже зарегистрирован' });
-  if (err.name === 'CastError' || err.name === 'ValidationError') res.status(badRequest).send({ message: 'Переданы некорректные данные' });
-  if (err.statusCode === unauthorized) res.status(unauthorized).send({ message: 'Ошибка авторизации: неверный логин или пароль' });
-  if (err.statusCode === forbidden) res.status(forbidden).send({ message: 'Вы не можете удалить чужую карточку' });
-  if (err.statusCode === notFound) res.status(notFound).send({ message: 'Такой страницы не существует' });
-  if (err.statusCode === serverError) res.status(notFound).send({ message: 'Произошла ошибка' });
-
-  next();
-});
+app.use(errorHandler);
 
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
   autoIndex: true,

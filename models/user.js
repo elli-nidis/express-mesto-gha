@@ -5,7 +5,7 @@ const validator = require('validator');
 const { regexpEmail } = require('../utils/constants');
 const BadRequestError = require('../errors/badRequestError');
 
-const badRequestError = new BadRequestError({ message: 'Неправильные почта или пароль' });
+const badRequestError = new BadRequestError('Неправильные почта или пароль');
 
 const userSchema = new mongoose.Schema({
   name: {

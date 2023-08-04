@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const UnauthorizedError = require('../errors/unauthorizedError');
 
-const unauthorizedError = new UnauthorizedError({ message: 'Необходима авторизация' });
+const unauthorizedError = new UnauthorizedError('Необходима авторизация');
 
 // eslint-disable-next-line consistent-return
 function auth(req, _res, next) {

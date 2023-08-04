@@ -4,10 +4,10 @@ const NotFoundError = require('../errors/notFoundError');
 const InternalServerError = require('../errors/InternalServerError');
 const BadRequestError = require('../errors/badRequestError');
 
-const forbiddenError = new ForbiddenError({ message: 'Вы не можете удалить чужую карточку' });
-const notFoundError = new NotFoundError({ message: 'Запрашиваемые данные не найдены' });
-const internalServerError = new InternalServerError({ message: 'Произошла ошибка' });
-const badRequestError = new BadRequestError({ message: 'Переданы некорректные данные' });
+const forbiddenError = new ForbiddenError('Вы не можете удалить чужую карточку');
+const notFoundError = new NotFoundError('Запрашиваемые данные не найдены');
+const internalServerError = new InternalServerError('Произошла ошибка');
+const badRequestError = new BadRequestError('Переданы некорректные данные');
 
 function getCards(_req, res, next) {
   return Card.find({})
