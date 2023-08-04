@@ -1,5 +1,6 @@
 const express = require('express');
 
+const helmet = require('helmet');
 const { PORT = 3000 } = process.env;
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -16,8 +17,8 @@ const notFoundError = new NotFoundError('Такой страницы не сущ
 
 const app = express();
 
+app.use(helmet());
 app.use(bodyParser.json());
-
 app.use(cookieParser());
 
 app.post('/signin', celebrate({
