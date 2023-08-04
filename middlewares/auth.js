@@ -7,7 +7,8 @@ const unauthorizedError = new UnauthorizedError({ message: 'Необходима
 function auth(req, _res, next) {
   let token;
   try {
-    token = req.headers.cookie.replace('jwt=', '');
+    // token = req.headers.cookie.replace('jwt=', '');
+    token = req.cookies.jwt;
   } catch (err) {
     return next(unauthorizedError);
   }
