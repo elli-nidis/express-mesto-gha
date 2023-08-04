@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+
 const UnauthorizedError = require('../errors/unauthorizedError');
 
 const unauthorizedError = new UnauthorizedError({ message: 'Необходима авторизация' });
